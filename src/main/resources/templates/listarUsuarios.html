@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(to right,
+        #e0f7fa, #b2ebf2); margin: 0; padding: 20px; position: relative;
+        }
+        .logout { position: absolute; top: 20px; right: 20px;
+        }
+        .logout button { background-color: #d32f2f; color: white; padding: 12px 20px; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer;
+        }
+        .logout button:hover { background-color: #b71c1c;
+        }
+        h2 { color: #00796b; text-align: center; margin-bottom: 30px; font-size: 28px;
+        }
+        .buttons { text-align: center; margin-bottom: 30px;
+        }
+        .buttons a { background-color: #009688; color: white; padding: 12px 25px; margin: 0 15px; text-decoration: none;
+            border-radius: 6px; font-size: 16px;
+        }
+        .buttons a:hover { background-color: #00796b;
+        }
+        table { width: 90%; max-width: 1200px; border-collapse: collapse; margin: auto; background: white;
+            border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #e0e0e0;
+        }
+        th { background-color: #009688; color: white; font-weight: bold;
+        }
+        tr:hover { background-color: #f0f4f8;
+        }
+        .actions a, .actions button { margin-right: 15px; color: #2196f3; text-decoration: none; cursor: pointer;
+            font-weight: bold; background: none; border: none;
+        }
+        .actions a:hover { color: #1976d2; }
+        .delete { color: #d32f2f !important; }
+        .delete:hover { color: #b71c1c !important; }
+        .no-auth { color: #777; font-style: italic; }
+    </style>
+
+    <script>
+        function confirmarEliminar(url) {
+            if (confirm("¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer.")) {
+                window.location.href = url;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="logout">
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+</div>
+
+<h2>Gestión de Usuarios</h2>
+<div class="buttons">
+    <a href="/usuarios/nuevo" sec:authorize="hasRole('ADMIN')">Crear Nuevo Usuario</a>
+    <a href="/votaciones">Gestión de Votaciones</a>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Rol</th>
+        <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+        <th sec:authorize="!hasRole('ADMIN')">Acciones</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="u : ${usuarios}">
+        <td th:text="${u.id}"></td>
+        <td th:text="${u.nombre}"></td>
+        <td th:text="${u.rol}"></td>
+
+        <td class="actions" sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/usuarios/consultar/{id}(id=${u.id})}">Editar</a>
+
+            <button class="delete"
+                    type="button"
+                    th:onclick="|confirmarEliminar('@{/usuarios/eliminar/{id}(id=${u.id})}')|">
+                Eliminar
+            </button>
+        </td>
+        <td class="no-auth" sec:authorize="!hasRole('ADMIN')">
+            Solo administradores
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
