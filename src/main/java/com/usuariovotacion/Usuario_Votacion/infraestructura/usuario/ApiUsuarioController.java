@@ -30,7 +30,6 @@ public class ApiUsuarioController {
 
     @PostMapping
     public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
-        // {CODIFICAR_CLAVE}: Lógica eliminada, ahora reside en ServicioUsuario
         Usuario creado = servicio.crear(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
@@ -41,7 +40,6 @@ public class ApiUsuarioController {
             return ResponseEntity.notFound().build();
         }
         usuario.setId(id);
-        // {CODIFICAR_CLAVE}: Lógica eliminada, ahora reside en ServicioUsuario
         servicio.actualizar(usuario);
         return ResponseEntity.ok(usuario);
     }

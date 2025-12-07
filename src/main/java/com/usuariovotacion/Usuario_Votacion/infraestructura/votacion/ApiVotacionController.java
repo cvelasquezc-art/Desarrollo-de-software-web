@@ -17,13 +17,11 @@ public class ApiVotacionController {
 
     private final ServicioVotacion servicio;
 
-    // GET /api/votaciones → listar todas
     @GetMapping
     public List<Votacion> listar() {
         return servicio.listar();
     }
 
-    // GET /api/votaciones/5 → obtener una
     @GetMapping("/{id}")
     public ResponseEntity<Votacion> obtener(@PathVariable Long id) {
         return servicio.consultar(id)
@@ -31,14 +29,13 @@ public class ApiVotacionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // POST /api/votaciones → crear nueva
+
     @PostMapping
     public ResponseEntity<Votacion> crear(@RequestBody Votacion votacion) {
         Votacion creada = servicio.crear(votacion);
         return ResponseEntity.status(HttpStatus.CREATED).body(creada);
     }
 
-    // PUT /api/votaciones/5 → actualizar
     @PutMapping("/{id}")
     public ResponseEntity<Votacion> actualizar(@PathVariable Long id, @RequestBody Votacion votacion) {
         if (!servicio.consultar(id).isPresent()) {
@@ -49,7 +46,6 @@ public class ApiVotacionController {
         return ResponseEntity.ok(votacion);
     }
 
-    // DELETE /api/votaciones/5 → eliminar
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);
