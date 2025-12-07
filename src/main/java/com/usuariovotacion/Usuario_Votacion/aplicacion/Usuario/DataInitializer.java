@@ -16,9 +16,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (servicioUsuario.buscarPorNombre("admin").isEmpty()) {
-            Usuario admin = new Usuario(null, "{noop}1738", "admin", "ADMIN");
+            // Pasamos la clave SIN codificar. El ServicioUsuario se encargará de añadir {noop}.
+            Usuario admin = new Usuario(null, "1738", "admin", "ADMIN");
             servicioUsuario.crear(admin);
-            System.out.println("Usuario admin creado con clave: 1738 ");
+            System.out.println("Usuario admin creado con clave: 1738 (codificada por el servicio)");
         }
     }
 }

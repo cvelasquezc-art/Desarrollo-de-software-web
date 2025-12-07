@@ -38,8 +38,10 @@ public class ControladorSeguridadMVC {
 
         String nuevaClave = generarClaveAleatoria();
         Usuario usuario = opcional.get();
-        usuario.setClave("{noop}" + nuevaClave);
-        servicio.actualizar(usuario);
+        usuario.setClave(nuevaClave); // 🔑 ¡Ya no codificamos aquí!
+
+
+        servicio.actualizar(usuario); // El servicio se encargará de añadir {noop}
 
         model.addAttribute("success",
                 "¡Contraseña cambiada con éxito! Tu nueva contraseña es: "+ nuevaClave +

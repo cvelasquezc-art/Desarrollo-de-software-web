@@ -3,56 +3,54 @@ package com.usuariovotacion.Usuario_Votacion.infraestructura.usuario;
 import com.usuariovotacion.Usuario_Votacion.aplicacion.Usuario.ServicioUsuario;
 import com.usuariovotacion.Usuario_Votacion.dominio.Usuario.Usuario;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api/usuarios")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class ControladorUsuarioMVC {
-
+public class ApiUsuarioController {
     private final ServicioUsuario servicio;
 
-    @GetMapping("/usuarios")
-    public String listar(Model model) {
-        model.addAttribute("usuarios", servicio.listar());
-        return "listarUsuarios";
+    @GetMapping
+    public List<Usuario> listar() {
+        return servicio.listar();
     }
 
-    @GetMapping("/usuarios/nuevo")
-    public String nuevoUsuario(Model model) {
-        model.addAttribute("usuario", new Usuario());
-        return "formUsuario";
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> obtener(@PathVariable Long id) {
+        return servicio.consultar(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/usuarios/crear")
-    public String guardar(@ModelAttribute Usuario usuario, @RequestParam(required = false) String clave) {
-        boolean esNuevo = (usuario.getId() == null);
-        if (clave != null && !clave.isBlank()) {
-            usuario.setClave("{noop}" + clave);
-        } else if (!esNuevo) {
-            usuario.setClave( servicio.consultar(usuario.getId()).map(Usuario::getClave).orElse(usuario.getClave()));
-        }
-        if (esNuevo) {
-            servicio.crear(usuario);
-        } else {
-            servicio.actualizar(usuario);
-        }
-        return "redirect:/usuarios";
+    @PostMapping
+    public ResponseEntity<Usuario> crear(@RequestBody Usuario usuario) {
+        // {CODIFICAR_CLAVE}: Lógica eliminada, ahora reside en ServicioUsuario
+        Usuario creado = servicio.crear(usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @GetMapping("/usuarios/consultar/{id}")
-    public String editarUsuario(@PathVariable Long id, Model model) {
-        Optional<Usuario> usuario = servicio.consultar(id);
-        model.addAttribute("usuario", usuario.orElse(new Usuario()));
-        return "formUsuario";
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> actualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
+        if (!servicio.consultar(id).isPresent()) {
+            return ResponseEntity.notFound().build();
         }
+        usuario.setId(id);
+        // {CODIFICAR_CLAVE}: Lógica eliminada, ahora reside en ServicioUsuario
+        servicio.actualizar(usuario);
+        return ResponseEntity.ok(usuario);
+    }
 
-    @GetMapping("/usuarios/eliminar/{id}")
-    public String eliminar(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);
-        return "redirect:/usuarios";
+        return ResponseEntity.noContent().build();
     }
 }
+
+
