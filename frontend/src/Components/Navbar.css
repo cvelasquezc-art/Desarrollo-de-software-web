@@ -1,0 +1,42 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: var(--header-bg);
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    margin-right: 25px;
+    transition: color 0.3s ease;
+    padding: 5px 0;
+}
+
+.navbar-left a:hover {
+    color: var(--warning-color);
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.username-display {
+    margin-right: 15px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.logout-button {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
